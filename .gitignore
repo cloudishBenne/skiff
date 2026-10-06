@@ -24,3 +24,21 @@ rustc-ice-*.txt
 /config.toml
 /.skiff/
 *.local.toml
+
+# Common local secret material. CI also rejects these if forcibly tracked, but ignoring them here
+# reduces the chance of publishing them on a public topic branch before CI can fail.
+.env
+.env.*
+!.env.example
+.ssh/
+.gnupg/
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pem
+*.p12
+*.pfx
+*.key
+wg*.conf
+*wireguard*.conf
