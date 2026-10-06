@@ -1,0 +1,6 @@
+schema_version = 1
+
+[lla]
+repository = "https://github.com/chaqchase/lla"
+revision = "eb2e7111f7ae69e02d0c475844ef3541bf01339e"
+version = "0.6.5"
