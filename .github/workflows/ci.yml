@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Rust workspace
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Install Rust components
+        run: rustup component add rustfmt clippy
+
+      - name: Verify workspace
+        run: cargo xtask check
+
+  pr-policy:
+    name: PR policy
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Validate Conventional Commit PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          pattern='^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)\([a-z0-9._-]+\)!?: .+'
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            printf 'Invalid PR title: %s\n' "$PR_TITLE" >&2
+            printf 'Expected a scoped Conventional Commit title, e.g. feat(core): add path convergence\n' >&2
+            exit 1
+          fi
