@@ -27,7 +27,9 @@ flowchart LR
 ```
 
 - **Skiff** owns path convergence, target readiness/WoL, SSH lifecycle, reconnect behavior, and entry
-  into the configured Zellij session.
+  into the configured Zellij session. Core owns a configurable remote-entrypoint contract at that
+  boundary; it must be testable with a synthetic/stub entrypoint. Downstream Shell parent #4 owns the
+  concrete dedicated Bash/Zellij/Starship environment that is later plugged into that contract.
 - **Clasp** owns the explicit Android/remote clipboard protocol boundary.
 - **clasp-zellij** is UX glue for an explicit one-keystroke paste operation; it does not own the
   transport.
@@ -54,7 +56,9 @@ home/private path reachable
 ```
 
 After transport loss, the remote Zellij session remains authoritative and Skiff reconverges from the
-home-path prerequisite. No router-vendor-specific wake API is part of v0.1.
+home-path prerequisite. Core does not wait for downstream Shell #4 to implement the dedicated shell;
+it verifies the remote-entrypoint boundary with a stub, while #4 later supplies the real shell
+integration. No router-vendor-specific wake API is part of v0.1.
 
 ## Configuration boundary
 

@@ -24,7 +24,7 @@ For substantial work:
 9. CI reruns against that sealed head.
 10. The dedicated reviewer chat independently reviews the exact **sealed** head and posts a
     `REVIEW GATE`. Any implementation change after sealing requires resealing and re-review.
-11. After a current-head `READY FOR FINALIZATION` gate, use native GitHub squash merge.
+11. After an exact sealed-SHA `REVIEW GATE — READY FOR FINALIZATION`, use native GitHub squash merge.
 12. Verify the exact merged `main` SHA is GitHub `Verified`, then verify post-merge checks, native
     issue closure, and branch cleanup before treating the slice as complete.
 
@@ -77,18 +77,20 @@ Skiff uses **squash merge**. A PR is the reviewed unit of change, so `main` rece
 Conventional Commit per PR. Merge commits and rebase-merge are intentionally not part of the normal
 workflow.
 
-GitHub's native server-side squash merge creates/signs the final squash commit. That verification is
-not the same thing as a signature made with the repository owner's local private key. Governance #8
-owns the compatible commit-verification policy; release #12 owns owner-controlled signed version
-tags and immutable release publication.
+Iterative connector/agent commits on a topic branch may be unsigned. They are not the merge-ready
+state and never land on `main`. Once implementation stops, Governance #53 seals the PR branch into
+exactly one owner-SSH-signed commit with the same final tree and the current `main` head as parent.
+The sealed commit subject equals the PR title, the push uses an exact `--force-with-lease`, GitHub
+must report the sealed head as `Verified`, CI reruns, and the dedicated reviewer reviews that exact
+sealed SHA. Any implementation or PR-title change afterwards requires reseal + CI + re-review.
 
-Git signatures cannot be retrofitted onto an existing commit object without creating a new commit
-SHA. Therefore the policy is to keep unsigned iterative topic-branch commits out of `main`, verify
-the GitHub-signed squash commit after merge, and sign release tags deliberately before publication.
+The active `main` ruleset requires signed commits. Native GitHub squash merge then creates/signs the
+single commit that lands on `main`; post-merge verification fails closed unless that exact new main
+SHA is GitHub `Verified`.
 
-Governance #53 resolves the signed-commit compatibility problem by sealing each merge-ready PR into
-one owner-signed commit before final review. The `main` ruleset requires signed commits. Unsigned
-iterative connector commits remain allowed only before the seal and never land on `main`.
+These identities are intentionally distinct: the sealed PR head is owner-signed, the final main
+squash commit is GitHub-signed, and Release #12/#38 owns the separate owner-signed annotated version
+tag. The owner's private signing key remains local and is never delegated to Actions/connectors.
 
 ## Changelog
 

@@ -78,7 +78,10 @@ fn contains_private_key_material(bytes: &[u8]) -> bool {
         ["-----BEGIN OPENSSH ", "PRIVATE KEY-----"].concat(),
         ["-----BEGIN ", "PRIVATE KEY-----"].concat(),
         ["-----BEGIN RSA ", "PRIVATE KEY-----"].concat(),
+        ["-----BEGIN DSA ", "PRIVATE KEY-----"].concat(),
         ["-----BEGIN EC ", "PRIVATE KEY-----"].concat(),
+        ["-----BEGIN ENCRYPTED ", "PRIVATE KEY-----"].concat(),
+        ["-----BEGIN PGP ", "PRIVATE KEY BLOCK-----"].concat(),
     ];
 
     markers.iter().any(|marker| {
@@ -198,11 +201,24 @@ mod tests {
 
     #[test]
     fn detects_private_key_material_markers() {
-        let private_key_fixture =
-            ["prefix\n-----BEGIN OPENSSH ", "PRIVATE KEY-----\nredacted"].concat();
-        assert!(contains_private_key_material(
-            private_key_fixture.as_bytes()
-        ));
+        for private_key_fixture in [
+            ["prefix\n-----BEGIN OPENSSH ", "PRIVATE KEY-----\nredacted"].concat(),
+            [
+                "prefix\n-----BEGIN ENCRYPTED ",
+                "PRIVATE KEY-----\nredacted",
+            ]
+            .concat(),
+            ["prefix\n-----BEGIN DSA ", "PRIVATE KEY-----\nredacted"].concat(),
+            [
+                "prefix\n-----BEGIN PGP ",
+                "PRIVATE KEY BLOCK-----\nredacted",
+            ]
+            .concat(),
+        ] {
+            assert!(contains_private_key_material(
+                private_key_fixture.as_bytes()
+            ));
+        }
         assert!(!contains_private_key_material(
             b"synthetic documentation without private key material"
         ));

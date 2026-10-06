@@ -32,6 +32,10 @@ live issue/repository state.
 - Record research, architectural decisions, rejected alternatives, surprising constraints, and
   durable evidence in GitHub; do not leave them only in chat.
 - Route out-of-scope findings/debt to linked issues instead of silently expanding the current PR.
+- Treat native issue dependencies as execution constraints. If an active issue references a downstream
+  workstream that is still blocked on the current one, implement/test only the stable interface or
+  capability boundary with synthetic stubs; do not create a dependency cycle by pulling downstream
+  implementation forward.
 - Use scoped Conventional Commits (`type(scope): description`); scope is mandatory. The PR title is the squash-merge commit subject.
 - Run repository-owned verification (`cargo xtask check`) before declaring a slice ready.
 - Implementation work stops at a `PRE-SEAL HANDOFF`. The owner then seals the branch into exactly
