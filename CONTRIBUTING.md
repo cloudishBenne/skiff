@@ -30,6 +30,79 @@ For substantial work:
 
 GitHub-native issue relationships and branch deletion are preferred over cleanup workflows.
 
+### Native issue hierarchy
+
+The workstream parent owns the stable charter; bounded repository implementation belongs in its
+native child issues. Reuse the existing child when one already owns the scope. If a new slice is
+actually required, create a separate issue and attach it through GitHub's native **sub-issue**
+relationship instead of simulating hierarchy with a Markdown list or cross-reference.
+
+Use native issue dependencies only for real execution blockers. A preferred order recorded in an
+`ACTIVATION / PLAN` is not itself a dependency edge. Before creating a branch, read the child's live
+parent/dependency state and fail closed if the intended scope conflicts with an unresolved blocker.
+
+### Native child branch and Draft PR
+
+Each implementation child owns one primary development branch and one primary PR. Do not reuse that
+branch for unrelated children, and adopt an existing child PR instead of opening a duplicate.
+
+Branch names are lowercase and descriptive:
+
+```text
+<workstream>/<issue-number>-<short-slug>
+```
+
+For example, Governance child #13 uses a shape such as
+`governance/13-native-lifecycle`.
+
+Create the branch through GitHub's issue-development relationship when the active tool exposes it.
+An ordinary `git switch -c`, `git push`, or connector `create_branch` operation creates a Git
+branch but **does not prove the native issue↔development-branch relationship**.
+
+When the connected tool cannot create that native relationship, use GitHub CLI as the deterministic
+fallback:
+
+```bash
+gh issue develop 13 \
+  --repo cloudishBenne/skiff \
+  --base main \
+  --name governance/13-native-lifecycle
+```
+
+Use `--checkout` when a local checkout is wanted. Verify the native relationship with:
+
+```bash
+gh issue develop --list --repo cloudishBenne/skiff 13
+```
+
+GitHub cannot open a PR from a branch with no commits ahead of its base. After the first intended
+change exists, open the PR as **Draft immediately**, before continuing substantial implementation.
+The PR must target `main` and its body must contain a native closing keyword for the owning child,
+for example:
+
+```text
+Closes #13
+```
+
+The workstream parent may be referenced separately without a closing keyword. Closing keywords are
+authoritative only for PRs targeting the default branch, so do not retarget the PR without
+re-verifying the relationship.
+
+Before implementation begins in earnest, verify all of the following:
+
+- the child is a native sub-issue of the intended workstream parent;
+- the selected branch is the child's linked development branch, or the bootstrap exception is
+  explicitly recorded while the linking mechanism itself is being implemented;
+- the PR is Draft and targets `main`;
+- the PR body natively closes exactly the owning implementation child;
+- branch and PR scope match the child acceptance criteria.
+
+After implementation freezes, follow PRE-SEAL → owner seal → post-seal CI → exact sealed-SHA review
+→ native squash merge. Completion is not inferred from the merge button alone: verify the resulting
+`main` commit, post-merge checks, native child closure, and deletion of the merged topic branch.
+The repository has `delete_branch_on_merge=true`; if the merged branch remains, treat that as a
+cleanup failure to investigate rather than silently assuming lifecycle completion.
+
 ## Durable evidence and decisions
 
 Use the **issue body as the stable contract**, not a diary.

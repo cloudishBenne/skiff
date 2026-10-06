@@ -27,7 +27,13 @@ live issue/repository state.
   native child issues; do not silently absorb a sibling workstream.
 - Start by posting an `ACTIVATION / PLAN` comment on the parent with the exact base SHA, intended
   child order, open questions, explicit non-goals, and verification plan.
-- Work issue-first and keep substantial work in focused Draft PRs.
+- Work issue-first. Each implementation child owns one primary development branch and one primary
+  Draft PR; adopt an existing child PR instead of opening a duplicate.
+- Create the branch through the issue's native development relationship. If the active connector
+  cannot create that relationship, use the documented `gh issue develop` fallback in
+  `CONTRIBUTING.md`; an ordinary branch creation is not equivalent to native linkage.
+- Open the Draft PR as soon as the branch has its first intended commit. Target `main` and use a
+  native closing keyword such as `Closes #123` for the owning implementation child.
 - Prefer bounded slices: `read -> decide -> change -> verify -> checkpoint`.
 - Record research, architectural decisions, rejected alternatives, surprising constraints, and
   durable evidence in GitHub; do not leave them only in chat.
