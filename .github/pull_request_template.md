@@ -4,7 +4,16 @@
 
 ## Linked issue
 
-<!-- Use a closing keyword for the implementation child issue, for example: Closes #123. Link the workstream parent too. -->
+<!--
+Target main and use a closing keyword for exactly the owning implementation child, for example:
+Closes #123
+Link the workstream parent separately without a closing keyword.
+-->
+
+- [ ] Owning child is a native sub-issue of the intended workstream parent
+- [ ] Development branch is natively linked to that child, or a documented bootstrap exception applies
+- [ ] PR was opened as Draft immediately after the first intended branch commit
+- [ ] PR body contains the native closing relationship for the owning child
 
 ## Research / decisions
 

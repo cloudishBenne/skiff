@@ -30,12 +30,12 @@ canonical; do not rely on prior chat memory.
 
 First post an ACTIVATION / PLAN comment on #8 with exact base SHA, child order, open questions,
 non-goals, and verification plan. Reconcile the live child contracts and repository docs before
-coding if bootstrap-era wording conflicts with the now-proven seal/signature lifecycle. Start with
-#13: for that bootstrap-governance slice, adopt any relevant existing Draft PR or use the currently
-documented development-branch fallback. Once #13 has materialized the canonical native
-child→branch→PR mapping, use that mapping for the remaining #8 children. Record research,
-primary-source evidence, decisions and rejected alternatives as durable issue comments. Keep
-GitHub-native relationships native.
+coding if bootstrap-era wording conflicts with the now-proven seal/signature lifecycle. If #13 is
+still open, finish that bootstrap-governance slice first: adopt any relevant existing Draft PR or
+use the documented development-branch fallback. After #13 is complete, use the canonical native
+child→linked-development-branch→Draft-PR mapping in CONTRIBUTING.md for every remaining #8 child.
+Record research, primary-source evidence, decisions and rejected alternatives as durable issue
+comments. Keep GitHub-native relationships native.
 
 Goal: make the issue→development-branch→Draft-PR lifecycle, Conventional change metadata,
 exact-head review/post-merge gates, signature-verification policy, evidence/review handoff, and
