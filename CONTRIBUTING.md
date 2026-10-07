@@ -167,11 +167,25 @@ tag. The owner's private signing key remains local and is never delegated to Act
 
 ## Changelog
 
-`CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/). Governance #8 owns the
-deterministic per-PR fragment/change policy. Release #12 owns final version/changelog materialization.
+`CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/). Governance Slice #14 owns
+validated per-Slice change metadata; Release #12/#37 owns final version and changelog materialization.
 
-Until those gates are implemented, user-visible bootstrap changes must keep `[Unreleased]` accurate
-in the same PR.
+Every repository-changing Slice records machine-readable accounting in
+`change-accounting/slices/<slice>.toml`. The exact `subject` must match the PR title, and each
+affected target records its own `observed` semantic impact. The subject-derived PR class must equal
+the maximum per-target impact. The owning Workstream's planned maximum class is recorded in
+`change-accounting/workstreams.toml`; exceeding it requires a durable Workstream-level scope-change
+decision before merge readiness.
+
+Human release-note input stays separate under `changes/`: each Slice uses exactly one curated
+`<slice>.<added|changed|deprecated|removed|fixed|security>.md` fragment or exactly one
+`<slice>.no-changelog.md` with a non-empty reason. Changelog relevance is independent from the
+subject-derived/per-target semantic class; do not infer one axis from the other. Do not derive curated
+changelog prose from commit history and do not place concrete versions in Governance metadata.
+
+Validate repository metadata with `cargo xtask check`, validate a PR with
+`cargo xtask pr-policy <number> "<exact-title>"`, and inspect deterministic target aggregation with
+`cargo xtask change-summary`.
 
 ## Verification
 

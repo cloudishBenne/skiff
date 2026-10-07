@@ -1,0 +1,12 @@
+schema = 1
+roadmap = 1
+workstream = 8
+slice = 14
+pr = 56
+subject = "chore(governance): enforce deterministic change metadata"
+changelog = "changes/14.no-changelog.md"
+breaking_evidence = []
+
+[[target]]
+name = "repository"
+observed = "internal"
