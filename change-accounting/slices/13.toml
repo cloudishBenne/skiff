@@ -1,0 +1,12 @@
+schema = 1
+roadmap = 1
+workstream = 8
+slice = 13
+pr = 55
+subject = "docs(governance): materialize issue-to-draft-pr lifecycle"
+changelog = "changes/13.no-changelog.md"
+breaking_evidence = []
+
+[[target]]
+name = "repository"
+observed = "internal"

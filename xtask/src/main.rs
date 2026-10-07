@@ -1,3 +1,5 @@
+mod change_policy;
+
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -91,11 +93,10 @@ fn contains_private_key_material(bytes: &[u8]) -> bool {
     })
 }
 
-fn check_public_repository_boundary() -> Result<(), String> {
-    let root = repository_root()?;
+fn check_public_repository_boundary(root: &Path) -> Result<(), String> {
     let mut violations = Vec::new();
 
-    for path in tracked_files(&root)? {
+    for path in tracked_files(root)? {
         if forbidden_tracked_path(&path) {
             violations.push(format!("forbidden tracked path: {path}"));
             continue;
@@ -121,7 +122,9 @@ fn check_public_repository_boundary() -> Result<(), String> {
 }
 
 fn check() -> Result<(), String> {
-    check_public_repository_boundary()?;
+    let root = repository_root()?;
+    check_public_repository_boundary(&root)?;
+    change_policy::check(&root)?;
 
     let mut fmt = Command::new("cargo");
     fmt.args(["fmt", "--all", "--", "--check"]);
@@ -143,18 +146,54 @@ fn check() -> Result<(), String> {
     run(test)
 }
 
+fn parse_pr_number(value: &str) -> Result<u64, String> {
+    let pr = value
+        .parse::<u64>()
+        .map_err(|_| format!("invalid PR number {value:?}"))?;
+    if pr == 0 {
+        return Err("PR number must be positive".to_owned());
+    }
+    Ok(pr)
+}
+
+fn pr_policy(pr: &str, title: &str) -> Result<(), String> {
+    let root = repository_root()?;
+    change_policy::check_pr(&root, parse_pr_number(pr)?, title)
+}
+
+fn change_summary() -> Result<(), String> {
+    let root = repository_root()?;
+    let summary = change_policy::summary(&root)?;
+    print!("{summary}");
+    Ok(())
+}
+
 fn usage() {
-    eprintln!("usage: cargo xtask check");
+    eprintln!(
+        "usage:\n  cargo xtask check\n  cargo xtask pr-policy <pr-number> <exact-pr-title>\n  cargo xtask change-summary"
+    );
 }
 
 fn main() -> ExitCode {
     let mut args = env::args().skip(1);
-    let invocation = (args.next(), args.next());
-    let result = if matches!(invocation, (Some(ref command), None) if command == "check") {
-        check()
-    } else {
-        usage();
-        return ExitCode::from(2);
+    let result = match args.next().as_deref() {
+        Some("check") if args.next().is_none() => check(),
+        Some("pr-policy") => {
+            let pr = args.next();
+            let title = args.next();
+            let extra = args.next();
+            if let (Some(pr), Some(title), None) = (pr, title, extra) {
+                pr_policy(&pr, &title)
+            } else {
+                usage();
+                return ExitCode::from(2);
+            }
+        }
+        Some("change-summary") if args.next().is_none() => change_summary(),
+        _ => {
+            usage();
+            return ExitCode::from(2);
+        }
     };
 
     match result {

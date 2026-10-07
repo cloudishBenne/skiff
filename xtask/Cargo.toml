@@ -8,5 +8,8 @@ repository.workspace = true
 rust-version.workspace = true
 publish = false
 
+[dependencies]
+toml = "1.1.6"
+
 [lints]
 workspace = true

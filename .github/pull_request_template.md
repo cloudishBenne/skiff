@@ -19,6 +19,15 @@ Link the workstream parent separately without a closing keyword.
 
 <!-- Link durable issue comments for material research, decisions, rejected alternatives, or write "None". -->
 
+## Change accounting
+
+- [ ] `change-accounting/slices/<slice>.toml` records this PR number and exact PR title
+- [ ] each affected target records its own observed class and the maximum equals the subject-derived PR class
+- [ ] exactly one curated `changes/<slice>.<category>.md` fragment or explicit `no-changelog` reason exists
+- [ ] changelog relevance was decided independently from semantic class
+- [ ] breaking evidence is present only when the subject declares a breaking change
+- [ ] maximum per-target change class does not exceed the owning Workstream's declared maximum
+
 ## Verification
 
 - [ ] `cargo xtask check`

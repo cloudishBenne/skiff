@@ -42,7 +42,8 @@ live issue/repository state.
   workstream that is still blocked on the current one, implement/test only the stable interface or
   capability boundary with synthetic stubs; do not create a dependency cycle by pulling downstream
   implementation forward.
-- Use scoped Conventional Commits (`type(scope): description`); scope is mandatory. The PR title is the squash-merge commit subject.
+- Use scoped Conventional Commits (`type(scope): description`); scope is mandatory. The exact PR title is the squash-merge commit subject; never append a `(#PR)` suffix.
+- Every repository-changing Slice carries `change-accounting/slices/<slice>.toml` with explicit per-target semantic impacts plus exactly one curated `changes/<slice>.<category>.md` fragment or explicit `changes/<slice>.no-changelog.md` reason. Changelog relevance is independent from semantic class; planned Workstream scope guards live in `change-accounting/workstreams.toml`.
 - Run repository-owned verification (`cargo xtask check`) before declaring a slice ready.
 - Implementation work stops at a `PRE-SEAL HANDOFF`. The owner then seals the branch into exactly
   one owner-signed commit with an unchanged tree; Governance #53 owns the deterministic procedure.

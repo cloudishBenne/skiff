@@ -1,0 +1,7 @@
+schema = 1
+
+[[workstream]]
+issue = 8
+roadmap = 1
+planned_max = "internal"
+decision = "https://github.com/cloudishBenne/skiff/issues/8#issuecomment-6027635482"
